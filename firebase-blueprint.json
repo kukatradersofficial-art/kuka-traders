@@ -1,0 +1,464 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "Customer profile and saved delivery addresses (PII isolated to owner and admin).",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "name": { "type": "string", "minLength": 1, "maxLength": 120 },
+        "email": { "type": "string", "maxLength": 160 },
+        "phone": { "type": "string", "maxLength": 20 },
+        "role": { "type": "string", "enum": ["customer", "admin"] },
+        "status": { "type": "string", "enum": ["active", "suspended"] },
+        "preferredLang": { "type": "string", "enum": ["en", "ur"] },
+        "savedAddresses": { "type": "array", "description": "Up to 5 saved Sopore/J&K delivery addresses." },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "name", "email", "phone", "role", "status", "preferredLang", "savedAddresses", "createdAt", "updatedAt"]
+    },
+    "AdminRecord": {
+      "title": "AdminRecord",
+      "description": "Authorized KUKA TRADERS administrator record.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "email": { "type": "string", "maxLength": 160 },
+        "name": { "type": "string", "minLength": 1, "maxLength": 120 },
+        "role": { "type": "string", "enum": ["admin"] },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "email", "name", "role", "createdAt"]
+    },
+    "Category": {
+      "title": "Category",
+      "description": "Store product category with English and Urdu labels.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-zA-Z0-9_\\-]+$", "maxLength": 128 },
+        "name": { "type": "string", "minLength": 1, "maxLength": 100 },
+        "nameUrdu": { "type": "string", "maxLength": 120 },
+        "slug": { "type": "string", "minLength": 1, "maxLength": 100 },
+        "description": { "type": "string", "maxLength": 500 },
+        "imageUrl": { "type": "string", "maxLength": 500 },
+        "sortOrder": { "type": "number" },
+        "isActive": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "nameUrdu", "slug", "description", "imageUrl", "sortOrder", "isActive", "createdAt", "updatedAt"]
+    },
+    "Product": {
+      "title": "Product",
+      "description": "Grocery, household, or cattle feed item with pricing and inventory thresholds.",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "minLength": 1, "maxLength": 160 },
+        "nameUrdu": { "type": "string", "maxLength": 160 },
+        "description": { "type": "string", "maxLength": 1500 },
+        "categoryId": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "categoryName": { "type": "string", "minLength": 1, "maxLength": 100 },
+        "brand": { "type": "string", "minLength": 1, "maxLength": 100 },
+        "sku": { "type": "string", "minLength": 1, "maxLength": 64 },
+        "barcode": { "type": "string", "maxLength": 64 },
+        "imageUrl": { "type": "string", "maxLength": 500 },
+        "purchaseCost": { "type": "number" },
+        "sellingPrice": { "type": "number" },
+        "originalPrice": { "type": "number" },
+        "packSize": { "type": "string", "minLength": 1, "maxLength": 64 },
+        "unit": { "type": "string", "minLength": 1, "maxLength": 32 },
+        "stockQuantity": { "type": "number" },
+        "lowStockThreshold": { "type": "number" },
+        "discountPercent": { "type": "number" },
+        "priceStatus": { "type": "string", "enum": ["approved", "admin_price_required"] },
+        "isPublished": { "type": "boolean" },
+        "isFeatured": { "type": "boolean" },
+        "isBestSeller": { "type": "boolean" },
+        "isNewArrival": { "type": "boolean" },
+        "isDailyEssential": { "type": "boolean" },
+        "isDeleted": { "type": "boolean" },
+        "salesCount": { "type": "number" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": [
+        "name", "nameUrdu", "description", "categoryId", "categoryName", "brand", "sku",
+        "barcode", "imageUrl", "purchaseCost", "sellingPrice", "originalPrice", "packSize",
+        "unit", "stockQuantity", "lowStockThreshold", "discountPercent", "priceStatus",
+        "isPublished", "isFeatured", "isBestSeller", "isNewArrival", "isDailyEssential",
+        "isDeleted", "salesCount", "createdAt", "updatedAt"
+      ]
+    },
+    "Order": {
+      "title": "Order",
+      "description": "Customer order with historical line-item price snapshots and delivery address.",
+      "type": "object",
+      "properties": {
+        "orderNumber": { "type": "string", "minLength": 3, "maxLength": 40 },
+        "userId": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "customerName": { "type": "string", "minLength": 1, "maxLength": 120 },
+        "customerEmail": { "type": "string", "maxLength": 160 },
+        "customerPhone": { "type": "string", "minLength": 8, "maxLength": 20 },
+        "deliveryAddress": { "type": "string", "minLength": 4, "maxLength": 400 },
+        "locality": { "type": "string", "minLength": 1, "maxLength": 120 },
+        "landmark": { "type": "string", "maxLength": 160 },
+        "pinCode": { "type": "string", "pattern": "^[0-9]{6}$", "maxLength": 6 },
+        "deliveryInstructions": { "type": "string", "maxLength": 400 },
+        "items": { "type": "array", "description": "Snapshot of purchased products (up to 50 items)." },
+        "subtotal": { "type": "number" },
+        "deliveryCharge": { "type": "number" },
+        "discountAmount": { "type": "number" },
+        "couponCode": { "type": "string", "maxLength": 40 },
+        "totalAmount": { "type": "number" },
+        "paymentMethod": { "type": "string", "enum": ["UPI", "COD", "GATEWAY"] },
+        "paymentStatus": { "type": "string", "enum": ["Pending", "COD Pending", "Paid", "Failed", "Refunded"] },
+        "paymentReference": { "type": "string", "maxLength": 120 },
+        "orderStatus": { "type": "string", "enum": ["Order Placed", "Order Confirmed", "Preparing", "Out for Delivery", "Delivered", "Cancelled"] },
+        "adminNotes": { "type": "string", "maxLength": 500 },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": [
+        "orderNumber", "userId", "customerName", "customerEmail", "customerPhone",
+        "deliveryAddress", "locality", "landmark", "pinCode", "deliveryInstructions",
+        "items", "subtotal", "deliveryCharge", "discountAmount", "couponCode", "totalAmount",
+        "paymentMethod", "paymentStatus", "paymentReference", "orderStatus", "adminNotes",
+        "createdAt", "updatedAt"
+      ]
+    },
+    "Review": {
+      "title": "Review",
+      "description": "Moderated customer product review with verified-purchase status.",
+      "type": "object",
+      "properties": {
+        "productId": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "productName": { "type": "string", "minLength": 1, "maxLength": 160 },
+        "userId": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "userName": { "type": "string", "minLength": 1, "maxLength": 120 },
+        "orderId": { "type": "string", "maxLength": 128 },
+        "rating": { "type": "number" },
+        "comment": { "type": "string", "minLength": 3, "maxLength": 1000 },
+        "verifiedPurchase": { "type": "boolean" },
+        "status": { "type": "string", "enum": ["pending", "approved", "hidden"] },
+        "adminReply": { "type": "string", "maxLength": 600 },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": [
+        "productId", "productName", "userId", "userName", "orderId",
+        "rating", "comment", "verifiedPurchase", "status", "adminReply", "createdAt", "updatedAt"
+      ]
+    },
+    "Faq": {
+      "title": "Faq",
+      "description": "Editable storefront Frequently Asked Question.",
+      "type": "object",
+      "properties": {
+        "question": { "type": "string", "minLength": 3, "maxLength": 300 },
+        "answer": { "type": "string", "minLength": 3, "maxLength": 1500 },
+        "sortOrder": { "type": "number" },
+        "isActive": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["question", "answer", "sortOrder", "isActive", "createdAt", "updatedAt"]
+    },
+    "Banner": {
+      "title": "Banner",
+      "description": "Homepage hero or promotional banner controlled by admin.",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string", "minLength": 1, "maxLength": 160 },
+        "subtitle": { "type": "string", "maxLength": 300 },
+        "imageUrl": { "type": "string", "maxLength": 500 },
+        "ctaText": { "type": "string", "maxLength": 60 },
+        "targetCategory": { "type": "string", "maxLength": 128 },
+        "isActive": { "type": "boolean" },
+        "sortOrder": { "type": "number" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["title", "subtitle", "imageUrl", "ctaText", "targetCategory", "isActive", "sortOrder", "createdAt", "updatedAt"]
+    },
+    "Coupon": {
+      "title": "Coupon",
+      "description": "Discount coupon managed by admin.",
+      "type": "object",
+      "properties": {
+        "code": { "type": "string", "minLength": 2, "maxLength": 32 },
+        "description": { "type": "string", "maxLength": 200 },
+        "discountType": { "type": "string", "enum": ["flat", "percent"] },
+        "discountValue": { "type": "number" },
+        "minOrderAmount": { "type": "number" },
+        "isActive": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["code", "description", "discountType", "discountValue", "minOrderAmount", "isActive", "createdAt", "updatedAt"]
+    },
+    "InventoryLog": {
+      "title": "InventoryLog",
+      "description": "Immutable stock movement audit log.",
+      "type": "object",
+      "properties": {
+        "productId": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "productName": { "type": "string", "minLength": 1, "maxLength": 160 },
+        "changeType": { "type": "string", "enum": ["restock", "adjustment", "order_deduction", "order_restore"] },
+        "quantityDelta": { "type": "number" },
+        "previousStock": { "type": "number" },
+        "newStock": { "type": "number" },
+        "reason": { "type": "string", "maxLength": 300 },
+        "performedBy": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["productId", "productName", "changeType", "quantityDelta", "previousStock", "newStock", "reason", "performedBy", "createdAt"]
+    },
+    "PriceResearch": {
+      "title": "PriceResearch",
+      "description": "Admin-only Sopore and J&K market price verification research record.",
+      "type": "object",
+      "properties": {
+        "productId": { "type": "string", "maxLength": 128 },
+        "productName": { "type": "string", "minLength": 1, "maxLength": 160 },
+        "brand": { "type": "string", "minLength": 1, "maxLength": 100 },
+        "packSize": { "type": "string", "minLength": 1, "maxLength": 64 },
+        "unit": { "type": "string", "minLength": 1, "maxLength": 32 },
+        "priceScope": { "type": "string", "enum": ["supplier_invoice", "local_sopore_quote", "official_mrp", "jk_des_bulletin", "dca_monitoring", "online_retailer_ref"] },
+        "mrp": { "type": "number" },
+        "observedPrice": { "type": "number" },
+        "purchaseCost": { "type": "number" },
+        "proposedSellingPrice": { "type": "number" },
+        "sourceLabel": { "type": "string", "minLength": 1, "maxLength": 200 },
+        "sourceUrl": { "type": "string", "maxLength": 500 },
+        "locationMarket": { "type": "string", "minLength": 1, "maxLength": 160 },
+        "researchDate": { "type": "string", "maxLength": 40 },
+        "verificationStatus": { "type": "string", "enum": ["admin_price_required", "verified_pending_approval", "approved_published"] },
+        "notes": { "type": "string", "maxLength": 500 },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": [
+        "productId", "productName", "brand", "packSize", "unit", "priceScope",
+        "mrp", "observedPrice", "purchaseCost", "proposedSellingPrice", "sourceLabel",
+        "sourceUrl", "locationMarket", "researchDate", "verificationStatus", "notes",
+        "createdAt", "updatedAt"
+      ]
+    },
+    "StoreSettings": {
+      "title": "StoreSettings",
+      "description": "Public storefront settings, delivery zones, payment toggles, and policies (no secrets).",
+      "type": "object",
+      "properties": {
+        "storeName": { "type": "string", "minLength": 1, "maxLength": 120 },
+        "logoUrl": { "type": "string", "maxLength": 80000, "description": "Store logo image URL or uploaded branding asset." },
+        "tagline": { "type": "string", "maxLength": 240 },
+        "phone": { "type": "string", "maxLength": 30 },
+        "whatsappNumber": { "type": "string", "maxLength": 30 },
+        "email": { "type": "string", "maxLength": 160 },
+        "address": { "type": "string", "maxLength": 300 },
+        "pinCode": { "type": "string", "maxLength": 12 },
+        "latitude": { "type": "number" },
+        "longitude": { "type": "number" },
+        "openingHours": { "type": "string", "maxLength": 60 },
+        "closingHours": { "type": "string", "maxLength": 60 },
+        "deliveryZones": { "type": "array", "description": "Configured delivery localities and charges in INR." },
+        "defaultDeliveryCharge": { "type": "number" },
+        "freeDeliveryThreshold": { "type": "number" },
+        "minOrderAmount": { "type": "number" },
+        "promoBannerText": { "type": "string", "maxLength": 240 },
+        "primaryColor": { "type": "string", "maxLength": 20 },
+        "codEnabled": { "type": "boolean" },
+        "codLabel": { "type": "string", "maxLength": 80 },
+        "codInstructions": { "type": "string", "maxLength": 240 },
+        "upiEnabled": { "type": "boolean" },
+        "upiLabel": { "type": "string", "maxLength": 80 },
+        "upiInstructions": { "type": "string", "maxLength": 240 },
+        "merchantUpiId": { "type": "string", "maxLength": 120 },
+        "merchantUpiName": { "type": "string", "maxLength": 120 },
+        "zapUpiMerchantId": { "type": "string", "maxLength": 120, "description": "Non-secret Zap UPI merchant identifier (API keys stay in server/Vercel env vars)." },
+        "zapUpiCreateUrl": { "type": "string", "maxLength": 300, "description": "Non-secret Zap UPI create-order endpoint URL." },
+        "zapUpiVerifyUrl": { "type": "string", "maxLength": 300, "description": "Non-secret Zap UPI verify-order endpoint URL." },
+        "otherGatewayEnabled": { "type": "boolean" },
+        "otherGatewayLabel": { "type": "string", "maxLength": 80 },
+        "otherGatewayInstructions": { "type": "string", "maxLength": 240 },
+        "aboutUsTitle": { "type": "string", "maxLength": 160 },
+        "aboutUsParagraphs": { "type": "array", "description": "Editable About Us paragraphs." },
+        "returnPolicy": { "type": "string", "maxLength": 2000 },
+        "privacyPolicy": { "type": "string", "maxLength": 2000 },
+        "termsConditions": { "type": "string", "maxLength": 2000 },
+        "facebookUrl": { "type": "string", "maxLength": 300 },
+        "instagramUrl": { "type": "string", "maxLength": 300 },
+        "orderStatusEmailsEnabled": { "type": "boolean", "description": "Enable automated Cloud Function transactional emails when order status updates." },
+        "emailNotifyStatuses": { "type": "array", "description": "Up to 6 order statuses that trigger automated customer email notifications." },
+        "emailReplyTo": { "type": "string", "maxLength": 160, "description": "Reply-To email address for automated order status emails." },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": [
+        "storeName", "tagline", "phone", "whatsappNumber", "email", "address", "pinCode",
+        "latitude", "longitude", "openingHours", "closingHours", "deliveryZones",
+        "defaultDeliveryCharge", "freeDeliveryThreshold", "minOrderAmount", "promoBannerText",
+        "primaryColor", "codEnabled", "upiEnabled", "merchantUpiId", "merchantUpiName",
+        "otherGatewayEnabled", "otherGatewayLabel", "aboutUsTitle", "aboutUsParagraphs",
+        "returnPolicy", "privacyPolicy", "termsConditions", "facebookUrl", "instagramUrl", "updatedAt"
+      ]
+    },
+    "PaymentConfig": {
+      "title": "PaymentConfig",
+      "description": "Payment method enable/disable flags, verification guards, and non-secret Zap UPI configuration stored at settings/payment_config.",
+      "type": "object",
+      "properties": {
+        "codEnabled": { "type": "boolean" },
+        "codLabel": { "type": "string", "maxLength": 80 },
+        "codInstructions": { "type": "string", "maxLength": 240 },
+        "upiEnabled": { "type": "boolean" },
+        "upiLabel": { "type": "string", "maxLength": 80 },
+        "upiInstructions": { "type": "string", "maxLength": 240 },
+        "upiVerificationMode": { "type": "string", "enum": ["require_zap_upi", "manual_utr"] },
+        "netBankingEnabled": { "type": "boolean" },
+        "netBankingLabel": { "type": "string", "maxLength": 80 },
+        "netBankingInstructions": { "type": "string", "maxLength": 240 },
+        "netBankingRequireGateway": { "type": "boolean" },
+        "merchantUpiId": { "type": "string", "maxLength": 120 },
+        "merchantUpiName": { "type": "string", "maxLength": 120 },
+        "zapUpiEnvironment": { "type": "string", "enum": ["sandbox", "production"] },
+        "zapUpiMerchantId": { "type": "string", "maxLength": 120 },
+        "zapUpiCreateUrl": { "type": "string", "maxLength": 300 },
+        "zapUpiVerifyUrl": { "type": "string", "maxLength": 300 },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": [
+        "codEnabled", "codLabel", "codInstructions",
+        "upiEnabled", "upiLabel", "upiInstructions", "upiVerificationMode",
+        "netBankingEnabled", "netBankingLabel", "netBankingInstructions", "netBankingRequireGateway",
+        "merchantUpiId", "merchantUpiName", "zapUpiEnvironment",
+        "zapUpiMerchantId", "zapUpiCreateUrl", "zapUpiVerifyUrl", "updatedAt"
+      ]
+    },
+    "Notification": {
+      "title": "Notification",
+      "description": "Order or low-stock notification for admin or specific customer.",
+      "type": "object",
+      "properties": {
+        "targetRole": { "type": "string", "enum": ["admin", "customer"] },
+        "targetUserId": { "type": "string", "maxLength": 128 },
+        "title": { "type": "string", "minLength": 1, "maxLength": 160 },
+        "message": { "type": "string", "minLength": 1, "maxLength": 500 },
+        "type": { "type": "string", "enum": ["order", "stock", "system"] },
+        "isRead": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["targetRole", "targetUserId", "title", "message", "type", "isRead", "createdAt"]
+    },
+    "EmailLog": {
+      "title": "EmailLog",
+      "description": "Server-generated audit record written by the Firebase Cloud Function when an order status email is processed.",
+      "type": "object",
+      "properties": {
+        "orderId": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "orderNumber": { "type": "string", "minLength": 3, "maxLength": 40 },
+        "userId": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "recipientEmail": { "type": "string", "maxLength": 160 },
+        "customerName": { "type": "string", "maxLength": 120 },
+        "previousStatus": { "type": "string", "enum": ["Order Placed", "Order Confirmed", "Preparing", "Out for Delivery", "Delivered", "Cancelled"] },
+        "newStatus": { "type": "string", "enum": ["Order Placed", "Order Confirmed", "Preparing", "Out for Delivery", "Delivered", "Cancelled"] },
+        "subject": { "type": "string", "maxLength": 240 },
+        "provider": { "type": "string", "enum": ["smtp", "resend", "unconfigured"] },
+        "deliveryStatus": { "type": "string", "enum": ["sent", "skipped", "failed"] },
+        "messageId": { "type": "string", "maxLength": 200 },
+        "errorMessage": { "type": "string", "maxLength": 500 },
+        "triggeredBy": { "type": "string", "enum": ["cloud_function"] },
+        "eventId": { "type": "string", "maxLength": 128 },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": [
+        "orderId", "orderNumber", "userId", "recipientEmail", "customerName",
+        "previousStatus", "newStatus", "subject", "provider", "deliveryStatus",
+        "messageId", "errorMessage", "triggeredBy", "eventId", "createdAt"
+      ]
+    },
+    "PriceAlert": {
+      "title": "PriceAlert",
+      "description": "Customer price drop alert request for a specific storefront product (PII isolated to owner and admin).",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "userEmail": { "type": "string", "maxLength": 160 },
+        "userName": { "type": "string", "minLength": 1, "maxLength": 120 },
+        "productId": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "productName": { "type": "string", "minLength": 1, "maxLength": 160 },
+        "baselinePrice": { "type": "number" },
+        "targetPrice": { "type": "number" },
+        "status": { "type": "string", "enum": ["active", "notified", "cancelled"] },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": [
+        "userId", "userEmail", "userName", "productId", "productName",
+        "baselinePrice", "targetPrice", "status", "createdAt", "updatedAt"
+      ]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": { "$ref": "UserProfile" },
+      "description": "Customer profiles and saved delivery addresses (PII protected)."
+    },
+    "/admins/{adminId}": {
+      "schema": { "$ref": "AdminRecord" },
+      "description": "Authorized KUKA TRADERS administrator profiles."
+    },
+    "/categories/{categoryId}": {
+      "schema": { "$ref": "Category" },
+      "description": "Storefront product categories."
+    },
+    "/products/{productId}": {
+      "schema": { "$ref": "Product" },
+      "description": "Storefront product catalog and live stock."
+    },
+    "/orders/{orderId}": {
+      "schema": { "$ref": "Order" },
+      "description": "Customer orders with immutable item price snapshots."
+    },
+    "/reviews/{reviewId}": {
+      "schema": { "$ref": "Review" },
+      "description": "Moderated customer product reviews."
+    },
+    "/faqs/{faqId}": {
+      "schema": { "$ref": "Faq" },
+      "description": "Storefront frequently asked questions."
+    },
+    "/banners/{bannerId}": {
+      "schema": { "$ref": "Banner" },
+      "description": "Storefront promotional banners."
+    },
+    "/coupons/{couponId}": {
+      "schema": { "$ref": "Coupon" },
+      "description": "Promotional discount coupons."
+    },
+    "/inventory/{logId}": {
+      "schema": { "$ref": "InventoryLog" },
+      "description": "Immutable stock movement audit logs."
+    },
+    "/priceResearch/{researchId}": {
+      "schema": { "$ref": "PriceResearch" },
+      "description": "Admin-only Sopore & J&K price verification research records."
+    },
+    "/settings/{settingId}": {
+      "schema": { "$ref": "StoreSettings" },
+      "description": "Store configuration (settings/store_config) and payment method configuration (settings/payment_config)."
+    },
+    "/notifications/{notificationId}": {
+      "schema": { "$ref": "Notification" },
+      "description": "Admin and customer notifications."
+    },
+    "/emailLogs/{logId}": {
+      "schema": { "$ref": "EmailLog" },
+      "description": "Cloud Function transactional order status email audit logs (read-only to owner and admin)."
+    },
+    "/priceAlerts/{alertId}": {
+      "schema": { "$ref": "PriceAlert" },
+      "description": "Customer price-drop notification requests isolated to alert owner and admins."
+    }
+  }
+}

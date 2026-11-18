@@ -1,0 +1,8 @@
+{
+  "name": "KUKA TRADERS — Sopore Grocery, Household Essentials & Cattle Feed",
+  "description": "Shop everyday groceries, daals, atta, basmati rice, cooking oils, spices, dry fruits, household cleaning, personal care, and cattle feed at KUKA TRADERS in Sopore, Jammu & Kashmir.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
